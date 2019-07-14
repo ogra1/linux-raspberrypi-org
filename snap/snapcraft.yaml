@@ -1,0 +1,48 @@
+name: linux-raspberrypi-org
+version: 5.1.17+rpi
+summary: The raspberrypi.org Linux kernel built for the pi4
+description: This is the raspberrypi.org Linux kernel built for the pi4
+    using the 32bit armhf architecture.
+base: core18
+grade: stable
+confinement: strict
+type: kernel
+
+architectures:
+  - build-on: amd64
+    run-on: armhf
+
+parts:
+  firmware:
+    plugin: nil
+    source: git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+    source-depth: 1
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/firmware
+      cp -av ./* $SNAPCRAFT_PART_INSTALL/firmware/
+      cp -av ../../../brcmfmac-firmware/* $SNAPCRAFT_PART_INSTALL/firmware/brcm/
+  kernel:
+    plugin: kernel
+    source: https://github.com/raspberrypi/linux.git
+    source-type: git
+    source-depth: 1
+    source-tag: rpi-5.1.y
+    kdefconfig: [bcm2711_defconfig, snappy/generic.config, snappy/security.config, snappy/systemd.config, snappy/snappy.config, snappy/containers.config]
+    kconfigs:
+      - CONFIG_SECURITY_APPARMOR=y
+      - CONFIG_AUDIT=y
+      - CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+      - CONFIG_DEFAULT_SECURITY_APPARMOR=y
+    override-pull: |
+      snapcraftctl pull
+      set -e
+      echo "applying snappy configs patches"
+      git apply -v ../../../patches/configs-linux-5.1rpi.patch
+      git apply -v ../../../patches/apparmor-linux-5.1rpi.patch
+    kernel-with-firmware: false
+    build-packages:
+      - cpio
+      - libssl-dev
+      - on amd64 to armhf:
+        - gcc-arm-linux-gnueabihf:amd64
+    after: [ firmware ]
