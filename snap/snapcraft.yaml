@@ -7,6 +7,7 @@ description: |
 grade: stable
 confinement: strict
 type: kernel
+build-base: core18
 
 architectures:
   - build-on: amd64
@@ -30,6 +31,8 @@ parts:
     kconfigflavour: raspi2
     kconfigs:
       - CONFIG_DEBUG_INFO=n
+      # make graphics work
+      - CONFIG_DRM_V3D=m
       # the below allows booting from USB 3.1 SSDs without initrd modules
       - CONFIG_ENCLOSURE_SERVICES=y
       - CONFIG_SCSI_SAS_ATTRS=y
