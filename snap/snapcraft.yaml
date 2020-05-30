@@ -7,7 +7,6 @@ description: |
 grade: stable
 confinement: strict
 type: kernel
-build-base: core18
 
 architectures:
   - build-on: amd64
