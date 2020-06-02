@@ -23,11 +23,11 @@ parts:
       cp -av ../../../brcmfmac-firmware/* $SNAPCRAFT_PART_INSTALL/firmware/brcm/
   kernel:
     plugin: kernel
-    source: git://kernel.ubuntu.com/ubuntu/ubuntu-eoan.git
+    source: git://kernel.ubuntu.com/ubuntu/ubuntu-focal.git
     source-type: git
     source-depth: 1
-    source-tag: Ubuntu-raspi2-5.3.0-1015.17
-    kconfigflavour: raspi2
+    source-tag: Ubuntu-raspi-5.4.0-1009.9
+    kconfigflavour: raspi
     kconfigs:
       - CONFIG_DEBUG_INFO=n
       # make graphics work
@@ -37,9 +37,6 @@ parts:
       - CONFIG_SCSI_SAS_ATTRS=y
       - CONFIG_USB_STORAGE=y
       - CONFIG_USB_UAS=y
-      # required to boot from SD card without having to load modules in initrd
-      - CONFIG_REGULATOR_GPIO=y
-      - CONFIG_MMC_SDHCI_IPROC=y
     override-pull: |
       snapcraftctl pull
       echo "setting version to $(git tag|sed 's/^Ubuntu-//')"
